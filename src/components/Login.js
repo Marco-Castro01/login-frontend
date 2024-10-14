@@ -23,7 +23,7 @@ const Login = ({ onLogin, isAuthenticated }) => {
   const handleLogin = async () => {
     try {
       let url = "http://ec2-3-141-10-4.us-east-2.compute.amazonaws.com:4000/login";
-      let urlshort="http://localhost:4000/login"
+      //let urlshort="http://localhost:4000/login"
       const response = await fetch(url, {
         method: 'POST',
         headers: {

@@ -93,7 +93,7 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Error during registration:', error);
-      let message='Error internal server error' + error;
+      //let message='Error internal server error' + error;
       setMessage('Internal server error');
     }
   };
