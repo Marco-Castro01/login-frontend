@@ -23,40 +23,68 @@ const Register = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    // Password must have at least 6 characters
+    return password.length >= 6;
+  };
+
   useEffect(() => {
     if (registrationSuccess) {
+      // Introduce a delay before redirecting to the login page
       const delay = setTimeout(() => {
         navigate('/login');
-      }, 4000);
+      }, 4000); // 4000 milliseconds (4 seconds)
 
+      // Clear the timeout if the component is unmounted
       return () => clearTimeout(delay);
     }
   }, [registrationSuccess, navigate]);
 
   const handleRegister = async () => {
+    // Check if all fields are filled out
+    if (!username || !email || !password || !confirmPassword || !agreeTerms) {
+      setMessage('Please fill out all fields and agree to the terms.');
+      return;
+    }
+
     try {
-      // Check if all fields are filled
-      if (!username || !email || !password || !confirmPassword || !agreeTerms) {
-        setMessage('Please fill all fields and agree to the terms and conditions.');
+      // Check if the user has agreed to the terms
+      if (!agreeTerms) {
+        setMessage('Please agree to our terms and conditions before registering.');
         return;
       }
 
       // Check if the password and confirm password match
       if (password !== confirmPassword) {
-        setMessage("Passwords don't match");
+        setMessage("Passwords don't match.");
         return;
       }
 
-      const response = await fetch('http://ec2-3-141-10-4.us-east-2.compute.amazonaws.com/register', {
+      // Validate the password
+      if (!validatePassword(password)) {
+        setMessage('Password must have at least 6 characters.');
+        return;
+      }
+
+      // Print the body to the console for debugging purposes
+      const body = JSON.stringify({ username, email, password });
+      console.log("Sending body:", body);
+
+      const url = 'http://ec2-3-141-10-4.us-east-2.compute.amazonaws.com:4000/register';
+      //let urlcorto = 'http://localhost:40000/register';
+
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, email, password }),
+        body: body, // Send the body
       });
 
+      // Parse response and log it for debugging
       const data = await response.json();
-
+      console.log("Response:", data);
+      console.log("Hasta aqui si llega por lo menos");
       if (response.ok) {
         setRegistrationSuccess(true);
         setMessage('User registered successfully! Redirecting you to login...');
@@ -65,6 +93,7 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Error during registration:', error);
+      let message='Error internal server error' + error;
       setMessage('Internal server error');
     }
   };
@@ -148,7 +177,7 @@ const Register = () => {
                           <input
                               className="form-check-input"
                               type="checkbox"
-                              checked={agreeTerms}
+                              value={agreeTerms}
                               id="agreeTerms"
                               onChange={() => setAgreeTerms(!agreeTerms)}
                           />

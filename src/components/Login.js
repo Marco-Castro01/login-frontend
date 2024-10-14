@@ -1,6 +1,6 @@
 // components/Login.js
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link,  useNavigate } from 'react-router-dom';
 import {
   MDBContainer,
   MDBCol,
@@ -11,6 +11,8 @@ import {
   MDBCardImage,
 } from 'mdb-react-ui-kit';
 
+
+
 const Login = ({ onLogin, isAuthenticated }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,14 +21,10 @@ const Login = ({ onLogin, isAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // Validar que los campos no estén vacíos
-    if (!username || !password) {
-      setMessage('Por favor, completa todos los campos.');
-      return; // No enviar la solicitud si hay campos vacíos
-    }
-
     try {
-      const response = await fetch('http://ec2-3-141-10-4.us-east-2.compute.amazonaws.com:4000/login', {
+      let url = "http://ec2-3-141-10-4.us-east-2.compute.amazonaws.com:4000/login";
+      let urlshort="http://localhost:4000/login"
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +41,7 @@ const Login = ({ onLogin, isAuthenticated }) => {
         // Introduce a delay before redirecting to the home page
         setTimeout(() => {
           navigate('/');
-        }, 4000); // 4000 milliseconds (4 seconds)
+        }, 4000); // 4000 milliseconds (5 seconds)
       } else {
         // Login failed
         setMessage(data.message);
@@ -59,7 +57,7 @@ const Login = ({ onLogin, isAuthenticated }) => {
       // Introduce a delay before redirecting to the home page
       const delay = setTimeout(() => {
         navigate('/');
-      }, 4000); // 4000 milliseconds (4 seconds)
+      }, 4000); // 4000 milliseconds (5 seconds)
 
       // Clear the timeout if the component is unmounted
       return () => clearTimeout(delay);
